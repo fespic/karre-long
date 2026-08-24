@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Karré Long</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bone:#F5F2ED;--card:#FFF;--ink:#231F1C;--ink2:#6B635C;--ink3:#9C948C;
+  --line:#E4DED6;--terra:#B0442F;
+  --b:#6E9CC4;--v:#6E9E7C;--o:#D2903A;--r:#BC4A32;--n:#9C948C;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bone);color:var(--ink);
+  -webkit-font-smoothing:antialiased;padding:0 0 60px;}
+.shell{display:grid;grid-template-columns:210px 1fr;min-height:100vh;}
+.side-nav{background:#EFEBE4;border-right:1px solid var(--line);padding:20px 0 40px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;}
+.side-nav .brand{font-family:'Fraunces',serif;font-size:16px;font-weight:600;
+  padding:0 18px 16px;letter-spacing:-.2px;}
+.mo{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);
+  font-weight:600;padding:13px 18px 6px;cursor:pointer;display:flex;align-items:center;gap:6px;
+  user-select:none;}
+.mo:hover{color:var(--ink2);}
+.mo .car{font-size:9px;width:8px;}
+.mo .here{margin-left:auto;width:5px;height:5px;border-radius:50%;background:var(--terra);flex-shrink:0;}
+.mo.shut{color:var(--ink3);}
+.dl{display:flex;align-items:center;gap:9px;padding:8px 18px;cursor:pointer;
+  font-size:13px;color:var(--ink2);border-left:3px solid transparent;}
+.dl:hover{background:#E7E2DA;color:var(--ink);}
+.dl.on{background:var(--card);color:var(--ink);font-weight:600;border-left-color:var(--terra);}
+.dl .dn{font-family:'Fraunces',serif;font-size:15px;font-weight:600;min-width:20px;}
+.dl .dd{font-size:11px;color:var(--ink3);text-transform:capitalize;}
+.dl.on .dd{color:var(--ink2);}
+.wrap{max-width:1100px;padding:22px 26px;}
+.closed{background:var(--card);border:1px solid var(--line);border-radius:9px;
+  padding:44px 26px;text-align:center;color:var(--ink3);font-size:14px;}
+.closed b{display:block;font-family:'Fraunces',serif;font-size:20px;color:var(--ink2);margin-bottom:6px;}
+@media(max-width:820px){
+  .shell{grid-template-columns:1fr;}
+  .side-nav{position:static;height:auto;display:flex;gap:6px;overflow-x:auto;
+    padding:12px;border-right:none;border-bottom:1px solid var(--line);}
+  .side-nav .brand,.mo{display:none;}
+  .dl{flex-direction:column;gap:2px;padding:8px 12px;border-left:none;border-radius:7px;
+    border:1px solid var(--line);background:var(--card);flex-shrink:0;}
+  .dl.on{border-color:var(--terra);}
+  .wrap{padding:18px 16px;}
+}
+
+/* header */
+header.h{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
+  padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:20px;flex-wrap:wrap;}
+.day{font-family:'Fraunces',serif;font-size:30px;font-weight:600;letter-spacing:-.5px;line-height:1.1;}
+.crew{font-size:13px;color:var(--ink2);margin-top:5px;}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--v);margin-right:5px;vertical-align:1px;}
+.dot.off{background:var(--ink3);}
+.crew .abs{text-decoration:line-through;color:var(--ink3);}
+.hrs{font-size:12px;color:var(--ink2);text-align:right;}
+
+/* kpi */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:15px 17px 14px;}
+.kpi .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:var(--ink3);font-weight:600;}
+.kpi .num{font-family:'Fraunces',serif;font-size:31px;font-weight:600;letter-spacing:-.8px;margin-top:7px;line-height:1;}
+.kpi .sub{font-size:12px;color:var(--ink2);margin-top:6px;line-height:1.4;}
+.kpi.accent{background:var(--terra);border-color:var(--terra);}
+.kpi.accent .lbl{color:rgba(255,255,255,.72);}
+.kpi.accent .num,.kpi.accent .sub{color:#fff;}
+.track{height:4px;background:var(--line);border-radius:2px;margin-top:9px;overflow:hidden;}
+.track.on{background:rgba(255,255,255,.28);}
+.fill{height:100%;background:var(--v);border-radius:2px;transition:width .3s;}
+.fill.w{background:#fff;}
+
+h2.s{font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:var(--ink3);
+  font-weight:600;margin-bottom:10px;}
+.legend{display:flex;gap:16px;margin-bottom:12px;font-size:11.5px;color:var(--ink2);flex-wrap:wrap;}
+.sw{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:6px;vertical-align:3px;}
+
+/* cards */
+.cards{display:flex;flex-direction:column;gap:10px;margin-bottom:26px;}
+.c{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--n);
+  border-radius:9px;display:grid;grid-template-columns:236px 1fr;gap:0 28px;padding:15px 20px;
+  align-items:start;transition:opacity .2s;}
+.c.done{opacity:.5;}
+.c[data-l=b]{border-left-color:var(--b);}
+.c[data-l=v]{border-left-color:var(--v);}
+.c[data-l=o]{border-left-color:var(--o);}
+.c[data-l=r]{border-left-color:var(--r);}
+.side{border-right:1px solid var(--line);padding-right:22px;}
+.when{font-size:10.5px;font-weight:600;letter-spacing:.5px;color:var(--ink3);}
+.nm{font-family:'Fraunces',serif;font-size:19px;font-weight:600;letter-spacing:-.25px;margin:3px 0 11px;}
+.st{display:flex;justify-content:space-between;align-items:flex-start;font-size:11.5px;
+  color:var(--ink3);padding:3px 0;}
+.st b{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--ink);
+  display:flex;flex-direction:column;align-items:flex-end;line-height:1.15;}
+.st b i{font-family:'Inter',sans-serif;font-style:normal;font-size:10.5px;font-weight:600;margin-top:2px;}
+.lv-b b,.lv-b b i{color:#3C6F9B;} .lv-v b,.lv-v b i{color:#3F7350;}
+.lv-o b,.lv-o b i{color:#9A6512;} .lv-r b,.lv-r b i{color:#A63B26;}
+.lv-n b{color:var(--ink2);font-size:12px;} .lv-n b i{display:none;}
+.tx{font-size:13px;line-height:1.5;color:var(--ink2);}
+.tx b{color:var(--ink);}
+.todo{margin-top:12px;padding-top:11px;border-top:1px solid var(--line);
+  display:flex;flex-direction:column;gap:1px;}
+
+/* task */
+.t{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.42;
+  padding:5px 0;cursor:pointer;user-select:none;}
+.t .cb{width:15px;height:15px;border:1.5px solid #C6BEB5;border-radius:4px;flex-shrink:0;
+  margin-top:1px;background:#fff;position:relative;transition:all .15s;}
+.t input{display:none;}
+.t input:checked + .cb{background:var(--v);border-color:var(--v);}
+.t input:checked + .cb:after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;
+  border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}
+.t input:checked ~ .lab{color:var(--ink3);text-decoration:line-through;}
+.t:active .cb{transform:scale(.9);}
+
+/* salon */
+.box{background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:14px;}
+.grp{padding:10px 18px 6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;
+  color:var(--ink3);font-weight:600;background:#FBF9F6;}
+.row{display:flex;align-items:flex-start;gap:11px;padding:9px 18px;border-bottom:1px solid #F2EDE7;
+  cursor:pointer;user-select:none;font-size:13.5px;}
+.row:last-child{border-bottom:none;}
+.row .hr{font-size:11.5px;color:var(--ink3);width:46px;flex-shrink:0;font-variant-numeric:tabular-nums;margin-top:1px;}
+.row .cl{color:var(--ink3);}
+.row input{display:none;}
+.row input:checked ~ .lab{color:var(--ink3);text-decoration:line-through;}
+.row input:checked + .cb{background:var(--v);border-color:var(--v);}
+.row input:checked + .cb:after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;
+  border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}
+.row .cb{width:15px;height:15px;border:1.5px solid #C6BEB5;border-radius:4px;flex-shrink:0;
+  margin-top:1px;background:#fff;position:relative;transition:all .15s;}
+
+/* footer / admin */
+.foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  font-size:11.5px;color:var(--ink3);}
+.btn{background:none;border:1px solid var(--line);border-radius:6px;padding:6px 12px;
+  font-family:inherit;font-size:11.5px;color:var(--ink2);cursor:pointer;}
+.btn:hover{border-color:var(--ink3);color:var(--ink);}
+dialog{border:none;border-radius:12px;padding:0;max-width:560px;width:92%;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);}
+dialog::backdrop{background:rgba(35,31,28,.45);}
+.dlg{padding:22px 24px;}
+.dlg h3{font-family:'Fraunces',serif;font-size:19px;font-weight:600;margin-bottom:8px;}
+.dlg p{font-size:12.5px;color:var(--ink2);line-height:1.55;margin-bottom:12px;}
+textarea{width:100%;height:190px;border:1px solid var(--line);border-radius:7px;padding:11px;
+  font-family:ui-monospace,Menlo,monospace;font-size:11.5px;resize:vertical;color:var(--ink);}
+.dlg-a{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;}
+.btn.p{background:var(--terra);border-color:var(--terra);color:#fff;}
+.msg{font-size:12px;padding:8px 11px;border-radius:6px;margin-top:10px;display:none;}
+.msg.ok{background:#E8F1EA;color:#3F7350;display:block;}
+.msg.ko{background:#FAE8E4;color:#A63B26;display:block;}
+.loading{text-align:center;padding:60px 20px;color:var(--ink3);font-size:13px;}
+.lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.lockbox{background:var(--card);border:1px solid var(--line);border-radius:12px;
+ padding:34px 32px;max-width:400px;width:100%;text-align:center;
+ box-shadow:0 8px 30px rgba(35,31,28,.08);}
+.lockbox .mark{font-family:'Fraunces',serif;font-size:26px;font-weight:600;letter-spacing:-.6px;}
+.lockbox p{font-size:13px;color:var(--ink2);margin:8px 0 20px;line-height:1.5;}
+.lockbox input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;
+ font-family:inherit;font-size:15px;color:var(--ink);text-align:center;background:var(--bone);}
+.lockbox input:focus{outline:none;border-color:var(--terra);background:#fff;}
+.lockbox button{width:100%;margin-top:11px;padding:12px;border:none;border-radius:8px;
+ background:var(--terra);color:#fff;font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer;}
+.lockbox button:disabled{opacity:.55;cursor:default;}
+.lockerr{font-size:12.5px;color:#A63B26;margin-top:11px;min-height:16px;}
+
+@media(max-width:820px){
+  .kpis{grid-template-columns:repeat(2,1fr);}
+  .c{grid-template-columns:1fr;gap:14px;}
+  .side{border-right:none;border-bottom:1px solid var(--line);padding-right:0;padding-bottom:12px;}
+  .day{font-size:25px;}
+}
+</style>
+</head>
+<body>
+<div id="warn" style="display:none;background:#FAE8E4;color:#A63B26;padding:9px 16px;
+ font-size:12.5px;text-align:center;">Sauvegarde indisponible sur cet appareil. Les cases cochées ne seront pas conservées.</div>
+<div class="shell">
+  <nav class="side-nav" id="nav"></nav>
+  <div class="wrap" id="app"><div class="loading">Chargement…</div></div>
+</div>
+
+<dialog id="dlg"><div class="dlg">
+  <h3>Charger une journée</h3>
+  <p>Coller ici les données produites depuis Salonkee. La journée en cours et les cases déjà cochées sont conservées.</p>
+  <textarea id="ta" placeholder='{"date":"2026-08-21", ...}'></textarea>
+  <div id="msg" class="msg"></div>
+  <div class="dlg-a">
+    <button class="btn" onclick="dlg.close()">Annuler</button>
+    <button class="btn p" onclick="loadDay()">Charger</button>
+  </div>
+</div></dialog>
+
+<script>
+
+/* ---- source des données et déchiffrement ---- */
+const DATA_URL = 'jours.enc';
+const KPASS = 'phrase';
+
+const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+
+async function deriveKey(pass, salt, iter){
+  const km = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass),
+    'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2', salt, iterations:iter, hash:'SHA-256'},
+    km, {name:'AES-GCM', length:256}, false, ['decrypt']);
+}
+
+async function dechiffrer(paquet, pass){
+  const key = await deriveKey(pass, b64d(paquet.salt), paquet.iter || 250000);
+  const clair = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64d(paquet.iv)},
+    key, b64d(paquet.data));
+  return JSON.parse(new TextDecoder().decode(clair));
+}
+
+function ecranVerrou(msg){
+  document.getElementById('app').innerHTML = `
+    <div class="lock"><div class="lockbox">
+      <div class="mark">Karré Long</div>
+      <p>Saisir la phrase d'accès. Elle n'est demandée qu'une fois sur cet appareil.</p>
+      <input type="password" id="pw" autocomplete="current-password" enterkeyhint="go">
+      <button id="go">Ouvrir</button>
+      <div class="lockerr" id="lockerr">${msg||''}</div>
+    </div></div>`;
+  const inp=document.getElementById('pw'), btn=document.getElementById('go');
+  const submit=async()=>{
+    const v=inp.value.trim(); if(!v) return;
+    btn.disabled=true; btn.textContent='Ouverture…';
+    const ok=await chargerDistant(v);
+    if(ok){ store.set(KPASS,v); demarrer(); }
+    else { btn.disabled=false; btn.textContent='Ouvrir';
+           document.getElementById('lockerr').textContent='Phrase incorrecte.';
+           inp.value=''; inp.focus(); }
+  };
+  btn.onclick=submit;
+  inp.onkeydown=e=>{ if(e.key==='Enter') submit(); };
+  inp.focus();
+}
+
+let PAQUET=null;
+
+async function chargerDistant(pass){
+  try{
+    if(!PAQUET){
+      const r=await fetch(DATA_URL,{cache:'no-store'});
+      if(!r.ok) return false;
+      PAQUET=await r.json();
+    }
+    const jours=await dechiffrer(PAQUET, pass);
+    jours.forEach(j=>{
+      const i=JOURS.findIndex(x=>x.date===j.date);
+      if(i>=0) JOURS[i]=j; else JOURS.push(j);
+    });
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ---- stockage local : fonctionne sur toute page hébergée ---- */
+const store = {
+  get(k){ try{ const v=localStorage.getItem('kl:'+k); return v===null?null:{value:v}; }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem('kl:'+k,v); return true; }catch(e){ return false; } },
+  list(prefix){ try{ const out=[]; for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i);
+      if(k&&k.startsWith('kl:'+prefix)) out.push(k.slice(3)); } return {keys:out}; }catch(e){ return {keys:[]}; } }
+};
+
+const LVL={b:'En avance',v:'Dans les temps',o:'En retard',r:'Très en retard',n:'Première visite'};
+
+let JOURS=[
+{"date": "2026-07-28", "titre": "Mardi 28 juillet", "present": [["Kelly", 1], ["Julie", 1], ["Mohamed", 0], ["Ruby", 0]], "horaires": "Ouverture 8h30 · Fermeture 18h30", "caSalon": 640, "caRuby": 0, "nbSalon": 7, "nbRuby": 0, "objectif": 5, "clients": [{"id": "pintor", "h": "9h30", "qui": "Kelly", "nom": "Alain P.", "lvl": "b", "tickets": 43, "moyen": "52 CHF", "freq": "52 j", "derniere": "35 j", "tx": "<b>43 tickets.</b> Coupe aux ciseaux, il vient tous les deux mois sans faute. En avance sur son rythme.", "tasks": ["Reprendre un rdv autour du 18 septembre"]}, {"id": "airiau", "h": "10h45", "qui": "Kelly", "nom": "Gabriel A.", "lvl": "r", "tickets": 13, "moyen": "42 CHF", "freq": "124 j", "derniere": "550 j", "tx": "<b>Absent depuis dix-huit mois</b> pour une fréquence de quatre mois. Il revient de lui-même.", "tasks": ["Comprendre son absence de dix-huit mois", "Reprendre un rdv autour du 29 novembre"]}, {"id": "albanese", "h": "10h00", "qui": "Kelly & Julie", "nom": "Sonia A.", "lvl": "v", "tickets": 22, "moyen": "141 CHF", "freq": "26 j", "derniere": "32 j", "tx": "Couleur Tinta, mèches en surface et coupe. <b>Ticket moyen 141 CHF</b>, une des meilleures clientes du jour. Elle vient toutes les quatre semaines.", "tasks": ["Proposer le produit qui tient la couleur", "Reprendre un rdv autour du 23 août"]}, {"id": "gruffel", "h": "11h45", "qui": "Kelly", "nom": "Emilie G.", "lvl": "b", "tickets": 2, "moyen": "89 CHF", "freq": "121 j", "derniere": "89 j", "tx": "Coupe de la frange, prestation d'appoint. Deuxième visite seulement : l'occasion de parler d'une coupe complète.", "tasks": ["Reprendre un rdv autour du 26 novembre", "Vérifier que sa fiche est complète"]}, {"id": "benbiou", "h": "12h00", "qui": "Kelly", "nom": "Christine B.", "lvl": "v", "tickets": 22, "moyen": "99 CHF", "freq": "111 j", "derniere": "133 j", "tx": "22 tickets à 99 CHF de moyenne. Elle vient environ trois fois par an, dans les temps.", "tasks": ["Reprendre un rdv autour du 16 novembre"]}, {"id": "caminiti", "h": "12h45", "qui": "Kelly", "nom": "Virginie C.", "lvl": "v", "tickets": 28, "moyen": "98 CHF", "freq": "44 j", "derniere": "54 j", "tx": "28 tickets, cycle de six semaines respecté. Cliente régulière à bon ticket.", "tasks": ["Reprendre un rdv autour du 10 septembre"]}, {"id": "mael28", "h": "15h30", "qui": "Kelly", "nom": "Mael", "lvl": "n", "tickets": null, "moyen": null, "freq": null, "derniere": null, "tx": "<b>Première visite.</b> Coupe cheveux longs. Fiche sans téléphone ni email : il sera injoignable.", "tasks": ["Récupérer téléphone et email", "Reprendre un rdv autour du 22 septembre"]}], "quotidien": [{"id": "q1", "h": "8h15", "t": "Ouverture, caisse et linge propre"}, {"id": "q2", "h": "", "t": "Vaisselle"}, {"id": "q3", "h": "", "t": "Désinfection des postes"}, {"id": "q4", "h": "18h30", "t": "Aspirateur et linge en machine"}, {"id": "q5", "h": "18h30", "t": "Fermeture caisse"}], "rappeler": [{"id": "r1", "t": "Appeler Babak A.", "cl": "28 réservations, disparu depuis 2,5 ans"}, {"id": "r2", "t": "Appeler Morgane A.", "cl": "6 mois de retard sur son cycle"}]},
+{"date": "2026-07-29", "titre": "Mercredi 29 juillet", "present": [["Kelly", 1], ["Mohamed", 1], ["Julie", 1], ["Ruby", 1]], "horaires": "Ouverture 8h30 · Fermeture 18h30", "caSalon": 980, "caRuby": 260, "nbSalon": 8, "nbRuby": 3, "objectif": 6, "clients": [{"id": "hauselmann", "h": "9h15", "qui": "Julie", "nom": "Christine H.", "lvl": "o", "tickets": 67, "moyen": "153 CHF", "freq": "35 j", "derniere": "84 j", "tx": "<b>67 tickets à 153 CHF de moyenne</b>, une des toutes meilleures clientes. Couleur Tinta. Elle a doublé son cycle habituel.", "tasks": ["Comprendre son retard sur son rythme", "Proposer le produit qui tient la couleur", "Reprendre un rdv autour du 2 septembre"]}, {"id": "nguyen", "h": "10h00", "qui": "Kelly", "nom": "Duc N.", "lvl": "r", "tickets": 23, "moyen": "20 CHF", "freq": "61 j", "derniere": "264 j", "tx": "Neuf mois d'absence pour une fréquence de deux mois. Petit ticket mais forte régularité perdue.", "tasks": ["Comprendre son absence de neuf mois", "Reprendre un rdv autour du 28 septembre"]}, {"id": "chappuis", "h": "10h30", "qui": "Julie", "nom": "Emilie C.", "lvl": "b", "tickets": 13, "moyen": "93 CHF", "freq": "181 j", "derniere": "42 j", "tx": "Couleur racine et longueur puis brushing. Vient deux fois par an, très en avance sur son rythme.", "tasks": ["Reprendre un rdv autour du 26 janvier"]}, {"id": "peltier", "h": "11h15", "qui": "Kelly", "nom": "Tanguy P.", "lvl": "r", "tickets": 6, "moyen": "47 CHF", "freq": "38 j", "derniere": "71 j", "tx": "Shampooing, tondeuse et styling. Il a presque doublé son cycle : décrochage en cours sur un client encore jeune.", "tasks": ["Reprendre un rdv autour du 5 septembre"]}, {"id": "aprele", "h": "12h00", "qui": "Kelly & Julie", "nom": "Marcelle A.", "lvl": "n", "tickets": 1, "moyen": "128 CHF", "freq": null, "derniere": null, "tx": "<b>Deuxième visite.</b> Couleur Tinta et brushing, ticket 128 CHF. C'est maintenant que se décide si elle revient.", "tasks": ["Reprendre un rdv autour du 12 septembre", "Compléter sa fiche dans Salonkee"]}, {"id": "maiorano", "h": "13h00", "qui": "Kelly & Julie", "nom": "Lia M.", "lvl": "r", "tickets": 34, "moyen": "140 CHF", "freq": "30 j", "derniere": "95 j", "tx": "<b>34 tickets à 140 CHF.</b> Couleur, mèches, brushing et soin. Elle vient d'habitude tous les mois : trois mois d'absence est anormal pour elle.", "tasks": ["Comprendre ses trois mois d'absence", "Proposer le produit qui prolonge le soin", "Reprendre un rdv autour du 28 août"]}, {"id": "piolino", "h": "13h45", "qui": "Kelly", "nom": "Louis P.", "lvl": "v", "tickets": 4, "moyen": "55 CHF", "freq": "110 j", "derniere": "110 j", "tx": "Coupe adulte et coupe enfant le même jour. Famille, deux prestations en une venue.", "tasks": ["Reprendre un rdv autour du 16 novembre"]}, {"id": "gret", "h": "15h00", "qui": "Kelly & Julie", "nom": "Jerome G.", "lvl": "b", "tickets": 44, "moyen": "52 CHF", "freq": "42 j", "derniere": "36 j", "tx": "44 tickets, coupe et cover toutes les six semaines. Client d'abonnement, en avance sur son rythme.", "tasks": ["Reprendre un rdv autour du 9 septembre"]}], "quotidien": [{"id": "q1", "h": "8h15", "t": "Ouverture, caisse et linge propre"}, {"id": "q2", "h": "", "t": "Vaisselle"}, {"id": "q3", "h": "", "t": "Désinfection des postes"}, {"id": "q4", "h": "18h30", "t": "Aspirateur et linge en machine"}, {"id": "q5", "h": "18h30", "t": "Fermeture caisse"}], "rappeler": [{"id": "r1", "t": "Appeler Babak A.", "cl": "28 réservations, disparu depuis 2,5 ans"}, {"id": "r2", "t": "Appeler Morgane A.", "cl": "6 mois de retard sur son cycle"}, {"id": "r3", "t": "Fusionner les fiches en doublon", "cl": "Patricia B., Sandie A."}]},
+{"date": "2026-08-17", "titre": "Lundi 17 août", "ferme": true, "present": [], "horaires": "Salon fermé le lundi", "caSalon": 0, "caRuby": 0, "nbSalon": 0, "nbRuby": 0, "objectif": 0, "clients": [], "quotidien": [], "rappeler": []},
+{"date": "2026-08-18", "titre": "Mardi 18 août", "present": [["Kelly", 1], ["Julie", 1], ["Mohamed", 0], ["Ruby", 0]], "horaires": "Ouverture 8h30 · Fermeture 18h30", "caSalon": 790, "caRuby": 0, "nbSalon": 8, "nbRuby": 0, "objectif": 6, "clients": [{"id": "droz", "h": "9h00", "qui": "Kelly", "nom": "France D.", "lvl": "b", "tickets": 53, "moyen": "146 CHF", "freq": "49 j", "derniere": "35 j", "tx": "Couleur racine et longueur puis brushing. <b>53 tickets à 146 CHF de moyenne</b>, une des meilleures clientes du salon.", "tasks": ["Proposer le produit qui tient la couleur", "Reprendre un rdv autour du 6 octobre"]}, {"id": "vazquez", "h": "10h45", "qui": "Kelly", "nom": "Kassandra V.", "lvl": "n", "tickets": 2, "moyen": "69 CHF", "freq": null, "derniere": "111 j", "tx": "Deuxième visite seulement. <b>C'est maintenant que se décide si elle devient régulière.</b>", "tasks": ["Reprendre un rdv autour du 17 septembre", "Vérifier que sa fiche est complète"]}, {"id": "rosenfeld", "h": "11h30", "qui": "Kelly", "nom": "Tom R.", "lvl": "v", "tickets": 98, "moyen": "44 CHF", "freq": "23 j", "derniere": "34 j", "tx": "<b>98 tickets.</b> Il vient toutes les trois semaines depuis des années. Un pilier du salon.", "tasks": ["Reprendre un rdv autour du 10 septembre"]}, {"id": "gouchi", "h": "12h00", "qui": "Kelly", "nom": "Sadoua G.", "lvl": "n", "tickets": 2, "moyen": "200 CHF", "freq": null, "derniere": "7 j", "tx": "Pose d'extensions 20cm, 1h30. <b>Ticket moyen 200 CHF, le plus élevé du jour.</b> Deuxième visite en une semaine.", "tasks": ["Proposer le produit d'entretien extensions", "Reprendre un rdv autour du 17 octobre", "Compléter sa fiche dans Salonkee"]}, {"id": "pleslic", "h": "13h30", "qui": "Kelly", "nom": "Andrija P.", "lvl": "b", "tickets": 18, "moyen": "42 CHF", "freq": "110 j", "derniere": "55 j", "tx": "Coupe tondeuse et dégradé. Vient environ trois fois par an, en avance sur son rythme.", "tasks": ["Reprendre un rdv autour du 6 décembre"]}, {"id": "toth", "h": "15h00", "qui": "Kelly", "nom": "Zsuzsanna T.", "lvl": "r", "tickets": 4, "moyen": "98 CHF", "freq": "129 j", "derniere": "536 j", "tx": "<b>Absente depuis un an et demi.</b> Elle revient pour un balayage complet et une coupe. Comprendre ce qui s'est passé.", "tasks": ["Comprendre son absence de dix-huit mois", "Proposer le produit d'entretien du balayage", "Reprendre un rdv autour du 25 décembre"]}, {"id": "racz", "h": "12h00", "qui": "Julie", "nom": "Janka R.", "lvl": "b", "tickets": 4, "moyen": "78 CHF", "freq": "156 j", "derniere": "70 j", "tx": "Coupe de la frange, prestation courte. Occasion de parler de la prochaine coupe complète.", "tasks": ["Reprendre un rdv autour du 21 janvier"]}, {"id": "mona18", "h": "16h45", "qui": "Kelly", "nom": "Mona B.", "lvl": "b", "tickets": 9, "moyen": "185 CHF", "freq": "79 j", "derniere": "12 j", "tx": "Coupe enfant. <b>Ticket moyen 185 CHF</b> grâce à ses prestations adultes. Elle revient jeudi chez Ruby.", "tasks": ["Reprendre un rdv autour du 5 novembre"]}], "quotidien": [{"id": "q1", "h": "8h15", "t": "Ouverture, caisse et linge propre"}, {"id": "q2", "h": "", "t": "Vaisselle"}, {"id": "q3", "h": "", "t": "Désinfection des postes"}, {"id": "q4", "h": "18h30", "t": "Aspirateur et linge en machine"}, {"id": "q5", "h": "18h30", "t": "Fermeture caisse"}], "rappeler": [{"id": "r1", "t": "Appeler Babak A.", "cl": "28 réservations, disparu depuis 2,5 ans"}, {"id": "r2", "t": "Appeler Morgane A.", "cl": "6 mois de retard sur son cycle"}]},
+{"date": "2026-08-19", "titre": "Mercredi 19 août", "present": [["Kelly", 1], ["Mohamed", 1], ["Ruby", 1], ["Julie", 0]], "horaires": "Ouverture 8h30 · Fermeture 18h30", "caSalon": 1010, "caRuby": 230, "nbSalon": 7, "nbRuby": 4, "objectif": 8, "clients": [{"id": "robinson", "h": "8h30", "qui": "Kelly", "nom": "Sarah R.", "lvl": "b", "tickets": 3, "moyen": "65 CHF", "freq": "186 j", "derniere": "154 j", "tx": "Coupe cheveux courts. Elle vient tous les six mois alors qu'une coupe courte se retravaille à huit semaines.", "tasks": ["Lui expliquer le rythme d'une coupe courte", "Reprendre un rdv autour du 21 février"]}, {"id": "patricia", "h": "9h00", "qui": "Kelly", "nom": "Patricia B.", "lvl": "v", "tickets": 49, "moyen": "271 CHF", "freq": "51 j", "derniere": "98 j", "tx": "<b>Première cliente du salon.</b> Retrait, balayage et pose d'extensions : trois heures en fauteuil. Zéro produit acheté en 49 tickets.", "tasks": ["Proposer le produit d'entretien extensions", "Corriger son numéro de téléphone dans Salonkee", "Reprendre un rdv autour du 9 octobre"]}, {"id": "patricia_r", "h": "9h15", "qui": "Ruby", "nom": "Patricia B. · ongles", "lvl": "o", "tickets": 49, "moyen": "271 CHF", "freq": "28 j", "derniere": "188 j", "tx": "Six mois sans venir aux ongles alors qu'un BIAB tient quatre semaines. Fidèle en coiffure, décrochée en ongles.", "tasks": ["Comprendre ses six mois d'absence aux ongles", "Reprendre un rdv autour du 16 septembre"]}, {"id": "allaz", "h": "11h00", "qui": "Ruby", "nom": "Pauline A.", "lvl": "b", "tickets": 20, "moyen": "35 CHF", "freq": "28 j", "derniere": "32 j", "tx": "Vingt réservations, cycle de quatre semaines tenu sans faille. Profil d'abonnement.", "tasks": ["Reprendre un rdv autour du 16 septembre"]}, {"id": "joana", "h": "12h00", "qui": "Kelly", "nom": "Joana B.", "lvl": "b", "tickets": 17, "moyen": "493 CHF", "freq": "123 j", "derniere": "29 j", "tx": "Coupe simple aujourd'hui, mais <b>ticket moyen 493 CHF</b> grâce à ses poses d'extensions. Sa dernière pose date de mars.", "tasks": ["Sonder sur la prochaine pose d'extensions", "Reprendre un rdv autour du 20 décembre"]}, {"id": "juliano", "h": "12h30", "qui": "Ruby", "nom": "Cecilia J.", "lvl": "n", "tickets": 5, "moyen": "130 CHF", "freq": "28 j", "derniere": "28 j", "tx": "Cycle de quatre semaines établi depuis trois mois. C'est maintenant que l'habitude se fixe.", "tasks": ["Reprendre un rdv autour du 16 septembre"]}, {"id": "ackermann", "h": "13h00", "qui": "Kelly", "nom": "Jean et Christine A.", "lvl": "v", "tickets": 29, "moyen": "84 CHF", "freq": "33 j", "derniere": "35 j", "tx": "Couple sur une fiche. Couleur puis deux coupes, en deux créneaux. <b>Zéro rendez-vous manqué sur 29.</b>", "tasks": ["Reprendre un rdv autour du 21 septembre, les deux ensemble"]}, {"id": "charriere", "h": "13h00", "qui": "Mohamed", "nom": "Sonia C.", "lvl": "o", "tickets": 2, "moyen": "227 CHF", "freq": "190 j", "derniere": "327 j", "tx": "<b>Revient après onze mois.</b> Couleur So Pure et cryothérapie. Ticket moyen 227 CHF, le plus élevé de l'après-midi.", "tasks": ["Comprendre son absence de onze mois", "Noter sa réponse dans Salonkee", "Reprendre un rdv autour du 25 février"]}, {"id": "monnier", "h": "13h30", "qui": "Kelly", "nom": "Jérôme M.", "lvl": "r", "tickets": 29, "moyen": "56 CHF", "freq": "81 j", "derniere": "320 j", "tx": "29 tickets mais <b>aucun email au fichier</b> et dix mois d'absence. Sans email, aucune relance possible.", "tasks": ["Récupérer son email et le saisir dans Salonkee", "Reprendre un rdv autour du 8 novembre"]}, {"id": "frochaux", "h": "14h15", "qui": "Ruby", "nom": "Martine F.", "lvl": "n", "tickets": 9, "moyen": "138 CHF", "freq": "28 j", "derniere": "130 j", "tx": "Neuf réservations, cycle de quatre semaines. <b>Pas d'email au fichier.</b>", "tasks": ["Récupérer son email", "Reprendre un rdv autour du 16 septembre"]}, {"id": "graff", "h": "14h30", "qui": "Kelly", "nom": "Karine G.", "lvl": "o", "tickets": 25, "moyen": "184 CHF", "freq": "80 j", "derniere": "91 j", "tx": "Balayage complet, soin et coupe. <b>Une des meilleures clientes du salon.</b> Ses tickets sont d'une régularité rare, entre 141 et 190 CHF.", "tasks": ["Proposer le produit qui prolonge le soin", "Reprendre un rdv autour du 7 novembre"]}], "quotidien": [{"id": "q1", "h": "8h15", "t": "Ouverture, caisse et linge propre"}, {"id": "q2", "h": "", "t": "Vaisselle"}, {"id": "q3", "h": "", "t": "Désinfection des postes"}, {"id": "q4", "h": "18h30", "t": "Aspirateur et linge en machine"}, {"id": "q5", "h": "18h30", "t": "Fermeture caisse"}], "rappeler": [{"id": "r1", "t": "Appeler Babak A.", "cl": "28 réservations, disparu depuis 2,5 ans"}, {"id": "r2", "t": "Appeler Morgane A.", "cl": "6 mois de retard sur son cycle"}, {"id": "r3", "t": "Fusionner les fiches en doublon", "cl": "Patricia B., Sandie A."}]},
+{
+  date:"2026-08-20",
+  titre:"Jeudi 20 août",
+  present:[["Kelly",1],["Julie",1],["Ruby",1],["Mohamed",0]],
+  horaires:"Ouverture 8h30 · Fermeture 18h30",
+  caSalon:850, caRuby:160, nbSalon:9, nbRuby:2, objectif:8,
+  clients:[
+    {id:"baudier",h:"8h30",qui:"Kelly",nom:"Eric B.",lvl:"r",
+     tickets:10,moyen:"44 CHF",freq:"135 j",derniere:"715 j",
+     tx:"Absent depuis <b>près de deux ans</b> alors qu'il venait tous les 4 mois. Il revient de lui-même.",
+     tasks:["Comprendre son absence de deux ans","Reprendre un rdv autour du 2 janvier"]},
+    {id:"amaya",h:"9h00",qui:"Kelly",nom:"Tanya A.",lvl:"v",
+     tickets:13,moyen:"51 CHF",freq:"140 j",derniere:"175 j",
+     tx:"Six mois d'absence pour un cycle de quatre. Très irrégulière de nature : ce n'est pas un décrochage.",
+     tasks:["Reprendre un rdv autour du 7 janvier"]},
+    {id:"martin",h:"10h00",qui:"Kelly",nom:"Aurelie M.",lvl:"r",
+     tickets:32,moyen:"106 CHF",freq:"55 j",derniere:"330 j",
+     tx:"<b>Le plus gros décrochage du jour.</b> Onze mois d'absence pour un cycle de huit semaines.",
+     tasks:["Comprendre ses onze mois d'absence","Balayage et cellophane : proposer le produit d'entretien","Reprendre un rdv autour du 14 octobre","Demander son accord pour le rappel soin à J+7"]},
+    {id:"strebel",h:"11h45",qui:"Kelly",nom:"Renée S.",lvl:"b",
+     tickets:99,moyen:"58 CHF",freq:"8 j",derniere:"6 j",
+     tx:"<b>La cliente la plus fidèle du salon.</b> Elle vient toutes les semaines. Rien à corriger, juste à ne pas casser.",
+     tasks:["Reprendre un rdv autour du 28 août"]},
+    {id:"wenger",h:"12h30",qui:"Kelly & Julie",nom:"Sylvette W.",lvl:"v",
+     tickets:17,moyen:"134 CHF",freq:"46 j",derniere:"55 j",
+     tx:"Couleur Tinta au programme. Deuxième ticket moyen le plus élevé de la journée.",
+     tasks:["Proposer le produit qui tient la couleur","Reprendre un rdv autour du 5 octobre","Demander son accord pour le rappel soin à J+7"]},
+    {id:"roulin",h:"13h00",qui:"Kelly",nom:"Nadège R.",lvl:"o",
+     tickets:2,moyen:"64 CHF",freq:"137 j",derniere:"358 j",
+     tx:"<b>Ni email ni téléphone au fichier</b>, et absente depuis un an. Sans coordonnées, elle est perdue.",
+     tasks:["Récupérer son téléphone et son email","Reprendre un rdv autour du 4 janvier"]},
+    {id:"cavadini",h:"15h30",qui:"Kelly",nom:"Claude C.",lvl:"b",
+     tickets:51,moyen:"61 CHF",freq:"21 j",derniere:"9 j",
+     tx:"51 tickets, un passage toutes les trois semaines sans faute. Le profil d'abonné.",
+     tasks:["Reprendre un rdv autour du 10 septembre"]},
+    {id:"cardinaux",h:"15h45",qui:"Ruby",nom:"Foulzia C.",lvl:"n",
+     tickets:null,moyen:null,freq:null,derniere:null,
+     tx:"<b>Première visite.</b> Aucun historique. C'est aujourd'hui que se décide si elle revient.",
+     tasks:["Soigner l'accueil, elle ne connaît pas le salon","Reprendre un rdv autour du 17 septembre","Compléter sa fiche dans Salonkee"]},
+    {id:"lheritier",h:"16h15",qui:"Kelly",nom:"Janina L.",lvl:"o",
+     tickets:10,moyen:"127 CHF",freq:"27 j",derniere:"69 j",
+     tx:"Deux mois et demi d'absence pour un cycle de quatre semaines. Bonne cliente en train de partir.",
+     tasks:["Balayage complet : proposer le produit d'entretien","Reprendre un rdv autour du 16 septembre","Demander son accord pour le rappel soin à J+7"]},
+    {id:"duscher",h:"16h45",qui:"Kelly",nom:"Vincent D.",lvl:"b",
+     tickets:47,moyen:"54 CHF",freq:"34 j",derniere:"30 j",
+     tx:"47 tickets, cycle de cinq semaines respecté. Rien d'inquiétant.",
+     tasks:["Reprendre un rdv autour du 23 septembre"]},
+    {id:"mona",h:"17h00",qui:"Ruby",nom:"Mona B.",lvl:"b",
+     tickets:9,moyen:"185 CHF",freq:"69 j",derniere:"2 j",
+     tx:"Elle était au salon <b>hier</b> pour la coiffure. Ticket moyen le plus élevé du jour.",
+     tasks:["Reprendre un rdv autour du 28 octobre, coiffure et ongles ensemble"]}
+  ],
+  quotidien:[
+    {id:"q1",h:"8h15",t:"Ouverture, caisse et linge propre"},
+    {id:"q2",h:"",t:"Vaisselle"},
+    {id:"q3",h:"",t:"Désinfection des postes"},
+    {id:"q4",h:"18h30",t:"Aspirateur et linge en machine"},
+    {id:"q5",h:"18h30",t:"Fermeture caisse"}
+  ],
+  rappeler:[
+    {id:"r1",t:"Appeler Babak A.",cl:"28 réservations, disparu depuis 2,5 ans"},
+    {id:"r2",t:"Appeler Morgane A.",cl:"6 mois de retard sur son cycle"},
+    {id:"r3",t:"Fusionner les fiches en doublon",cl:"Patricia B., Sandie A."}
+  ]
+}
+];
+
+let DAY=null, ALL={}, STATE={}, saveTimer=null;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const kData=d=>'jour:'+d, kState=d=>'etat:'+d;
+
+async function boot(){
+  let distant=false;
+  try{
+    const r=await fetch(DATA_URL,{cache:'no-store'});
+    if(r.ok){ PAQUET=await r.json(); distant=true; }
+  }catch(e){}
+
+  if(distant){
+    const p=store.get(KPASS);
+    if(p && p.value && await chargerDistant(p.value)) { demarrer(); return; }
+    ecranVerrou(p && p.value ? 'La phrase enregistrée ne fonctionne plus.' : '');
+    return;
+  }
+  demarrer();
+}
+
+function demarrer(){
+  JOURS=JOURS.filter(j=>!j.ferme&&j.clients.length);
+  JOURS.sort((a,b)=>b.date.localeCompare(a.date));
+  for(const j of JOURS){
+    const st=store.get(kState(j.date));
+    ALL[j.date]=st&&st.value?JSON.parse(st.value):{};
+  }
+  let cur=JOURS[0].date;
+  const r=store.get('jour-courant');
+  if(r&&r.value&&JOURS.some(j=>j.date===r.value)) cur=r.value;
+  select(cur,true);
+}
+
+function select(dt,first){
+  DAY=JOURS.find(j=>j.date===dt)||JOURS[0];
+  STATE=ALL[DAY.date]||(ALL[DAY.date]={});
+  if(!first) store.set('jour-courant',DAY.date);
+  renderNav(); render(); window.scrollTo(0,0);
+}
+
+const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const JSEM=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+
+function progress(j){
+  const st=ALL[j.date]||{};
+  let tot=0,done=0;
+  j.clients.forEach(c=>c.tasks.forEach((_,i)=>{tot++;if(st['c:'+c.id+':'+i])done++;}));
+  (j.quotidien||[]).forEach(q=>{tot++;if(st['q:'+q.id])done++;});
+  (j.rappeler||[]).forEach(r=>{tot++;if(st['r:'+r.id])done++;});
+  return {tot,done};
+}
+
+let CLOSED={}, navInit=false;
+function initNav(){
+  if(navInit) return; navInit=true;
+  const cur=DAY.date.slice(0,7);
+  JOURS.forEach(j=>{const k=j.date.slice(0,7); if(k!==cur) CLOSED[k]=true;});
+}
+function toggleMois(k){ CLOSED[k]=!CLOSED[k]; renderNav(); }
+
+function renderNav(){
+  initNav();
+  const groups=[];
+  for(const j of JOURS){
+    const dt=new Date(j.date+'T12:00:00');
+    const k=j.date.slice(0,7);
+    let g=groups.find(x=>x.k===k);
+    if(!g){g={k,lbl:MOIS[dt.getMonth()]+' '+dt.getFullYear(),jours:[]};groups.push(g);}
+    g.jours.push({j,dt});
+  }
+  const curMonth=DAY.date.slice(0,7);
+  let html='<div class="brand">Karré Long</div>';
+  for(const g of groups){
+    const shut=!!CLOSED[g.k];
+    const hasCur=g.k===curMonth;
+    html+=`<div class="mo ${shut?'shut':''}" onclick="toggleMois('${g.k}')">
+      <span class="car">${shut?'▸':'▾'}</span>${g.lbl}
+      ${shut&&hasCur?'<span class="here"></span>':''}</div>`;
+    if(shut) continue;
+    for(const {j,dt} of g.jours){
+      html+=`<div class="dl ${j.date===DAY.date?'on':''}" onclick="select('${j.date}')">
+        <span class="dn">${dt.getDate()}</span>
+        <span class="dd">${JSEM[dt.getDay()]}</span></div>`;
+    }
+  }
+  document.getElementById('nav').innerHTML=html;
+}
+
+function persist(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    const ok=store.set(kState(DAY.date),JSON.stringify(STATE));
+    const w=document.getElementById('warn');
+    if(w) w.style.display = ok ? 'none' : 'block';
+  },300);
+}
+
+function toggle(k,on){ STATE[k]=on; ALL[DAY.date]=STATE; persist(); refreshCounts(); renderNav(); }
+
+function stat(l,v,sub){
+  if(v==null) return '';
+  return `<div class="st"><span>${l}</span><b>${esc(v)}${sub?`<i>${esc(sub)}</i>`:''}</b></div>`;
+}
+
+function taskRow(k,label){
+  const on=!!STATE[k];
+  return `<label class="t"><input type="checkbox" ${on?'checked':''}
+    onchange="toggle('${k}',this.checked)"><span class="cb"></span>
+    <span class="lab">${esc(label)}</span></label>`;
+}
+
+function render(){
+  const d=DAY;
+  if(d.ferme||!d.clients.length){
+    document.getElementById('app').innerHTML=`
+      <header class="h">
+        <div><div class="day">${esc(d.titre)}</div>
+        <div class="crew">${esc(d.horaires)}</div></div>
+      </header>
+      <div class="closed"><b>Salon fermé</b>Aucun rendez-vous ce jour. Le salon est ouvert du mardi au samedi.</div>
+      <div class="foot"><span></span><span>
+        <button class="btn" onclick="dlg.showModal()">Charger une journée</button>
+      </span></div>`;
+    return;
+  }
+  const allT=[];
+  d.clients.forEach(c=>c.tasks.forEach((_,i)=>allT.push('c:'+c.id+':'+i)));
+  (d.quotidien||[]).forEach(q=>allT.push('q:'+q.id));
+  (d.rappeler||[]).forEach(r=>allT.push('r:'+r.id));
+
+  const cards=d.clients.map(c=>{
+    const keys=c.tasks.map((_,i)=>'c:'+c.id+':'+i);
+    const done=keys.every(k=>STATE[k]);
+    return `<div class="c ${done?'done':''}" data-l="${c.lvl}" data-cid="${c.id}">
+      <div class="side">
+        <div class="when">${esc(c.h)} · ${esc(c.qui).toUpperCase()}</div>
+        <div class="nm">${esc(c.nom)}</div>
+        ${stat('Tickets',c.tickets)}
+        ${stat('Ticket moyen',c.moyen)}
+        ${stat('Fréquence',c.freq)}
+        ${c.derniere
+          ? `<div class="st lv-${c.lvl}"><span>Dernière visite</span><b>${esc(c.derniere)}<i>${LVL[c.lvl]}</i></b></div>`
+          : `<div class="st lv-n"><span>Dernière visite</span><b>Première visite</b></div>`}
+      </div>
+      <div>
+        <div class="tx">${c.tx}</div>
+        <div class="todo">${c.tasks.map((t,i)=>taskRow(keys[i],t)).join('')}</div>
+      </div>
+    </div>`;}).join('');
+
+  const rows=(arr,pre)=>arr.map(x=>{
+    const k=pre+':'+x.id, on=!!STATE[k];
+    return `<label class="row"><input type="checkbox" ${on?'checked':''}
+      onchange="toggle('${k}',this.checked)"><span class="cb"></span>
+      <span class="hr">${esc(x.h||'—')}</span>
+      <span class="lab">${esc(x.t)}${x.cl?` <span class="cl">· ${esc(x.cl)}</span>`:''}</span></label>`;
+  }).join('');
+
+  document.getElementById('app').innerHTML=`
+    <header class="h">
+      <div>
+        <div class="day">${esc(d.titre)}</div>
+        <div class="crew">${d.present.map(([n,p])=>
+          `<span class="dot ${p?'':'off'}"></span><span class="${p?'':'abs'}">${esc(n)}</span>`).join(' &nbsp; ')}</div>
+      </div>
+      <div class="hrs">${esc(d.horaires)}</div>
+    </header>
+
+    <div class="kpis">
+      <div class="kpi">
+        <div class="lbl">Clients attendus</div>
+        <div class="num">${d.nbSalon + d.nbRuby}</div>
+        <div class="sub">${d.nbSalon} au salon · ${d.nbRuby} chez Ruby</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">CA salon estimé</div>
+        <div class="num">${d.caSalon.toLocaleString('fr-CH')}</div>
+        <div class="sub">CHF · Ruby ${d.caRuby} CHF compté à part</div>
+      </div>
+      <div class="kpi accent">
+        <div class="lbl">Rendez-vous repris</div>
+        <div class="num" id="kRdv">0 / ${d.objectif}</div>
+        <div class="sub">objectif du jour</div>
+        <div class="track on"><div class="fill w" id="kRdvBar" style="width:0%"></div></div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Clients à rappeler</div>
+        <div class="num" id="kRap">0 / ${(d.rappeler||[]).length}</div>
+        <div class="sub">actions entreprises</div>
+        <div class="track"><div class="fill" id="kRapBar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <h2 class="s">Les clients du jour, dans l'ordre d'arrivée</h2>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--b)"></i>En avance</span>
+      <span><i class="sw" style="background:var(--v)"></i>Dans les temps</span>
+      <span><i class="sw" style="background:var(--o)"></i>En retard</span>
+      <span><i class="sw" style="background:var(--r)"></i>Très en retard</span>
+      <span style="margin-left:auto;color:var(--ink3)">Niveau calculé sur la régularité propre à chaque client</span>
+    </div>
+    <div class="cards">${cards}</div>
+
+    <h2 class="s">Salon</h2>
+    <div class="box">
+      <div class="grp">Quotidien</div>${rows(d.quotidien||[],'q')}
+      <div class="grp">Clients à rappeler</div>${rows(d.rappeler||[],'r')}
+    </div>
+
+    <div class="foot">
+      <span id="kTot"></span>
+      <span>
+        <button class="btn" onclick="dlg.showModal()">Charger une journée</button>
+        <button class="btn" onclick="reset()">Réinitialiser</button>
+      </span>
+    </div>`;
+  refreshCounts();
+}
+
+function refreshCounts(){
+  const d=DAY;
+  let tot=0,done=0,rdv=0,rap=0;
+  d.clients.forEach(c=>c.tasks.forEach((t,i)=>{
+    tot++;
+    const k='c:'+c.id+':'+i;
+    if(STATE[k]){ done++; if(/^Reprendre un rdv/i.test(t)) rdv++; }
+  }));
+  (d.quotidien||[]).forEach(q=>{tot++; if(STATE['q:'+q.id])done++;});
+  (d.rappeler||[]).forEach(r=>{tot++; if(STATE['r:'+r.id]){done++;rap++;}});
+
+  const nRap=(d.rappeler||[]).length;
+  const set=(id,v)=>{const e=document.getElementById(id); if(e)e.textContent=v;};
+  const bar=(id,pct)=>{const e=document.getElementById(id); if(e)e.style.width=pct+'%';};
+  set('kRdv',rdv+' / '+d.objectif);
+  bar('kRdvBar',Math.min(100,Math.round(rdv/d.objectif*100)));
+  set('kRap',rap+' / '+nRap);
+  bar('kRapBar',nRap?Math.round(rap/nRap*100):0);
+  set('kTot',done+' tâches terminées sur '+tot);
+
+  d.clients.forEach(c=>{
+    const el=document.querySelector(`.c[data-cid="${c.id}"]`);
+    if(!el) return;
+    el.classList.toggle('done',c.tasks.every((_,i)=>STATE['c:'+c.id+':'+i]));
+  });
+}
+
+async function loadDay(){
+  const m=document.getElementById('msg');
+  try{
+    const d=JSON.parse(document.getElementById('ta').value);
+    if(!d.date||!Array.isArray(d.clients)) throw new Error('Il manque "date" ou "clients".');
+    store.set(kData(d.date),JSON.stringify(d));
+    const i=JOURS.findIndex(x=>x.date===d.date);
+    if(i>=0)JOURS[i]=d; else JOURS.push(d);
+    JOURS.sort((a,b)=>b.date.localeCompare(a.date));
+    if(!ALL[d.date]){
+      const st=store.get(kState(d.date));
+      ALL[d.date]=st&&st.value?JSON.parse(st.value):{};
+    }
+    m.className='msg ok'; m.textContent='Journée du '+d.date+' chargée.';
+    setTimeout(()=>{dlg.close();m.className='msg';select(d.date);},700);
+  }catch(e){
+    m.className='msg ko'; m.textContent='Données illisibles : '+e.message;
+  }
+}
+
+async function reset(){
+  if(!confirm('Décocher toutes les tâches de la journée ?')) return;
+  STATE={}; ALL[DAY.date]={};
+  store.set(kState(DAY.date),'{}');
+  renderNav(); render();
+}
+
+boot();
+</script>
+</body>
+</html>
