@@ -397,6 +397,7 @@ function progress(j){
 let CLOSED={}, navInit=false;
 function initNav(){
   if(navInit) return; navInit=true;
+  if(window.innerWidth<=820) return;
   const cur=DAY.date.slice(0,7);
   JOURS.forEach(j=>{const k=j.date.slice(0,7); if(k!==cur) CLOSED[k]=true;});
 }
